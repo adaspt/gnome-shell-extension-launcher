@@ -6,7 +6,7 @@ Personal extension, used only by me and not published to extensions.gnome.org. T
 
 ## Launcher
 
-`Super`+`/` opens a search dialog listing all applications. Type to filter, pick with `Up`/`Down` or the mouse, and press `Enter` or click to launch the app or focus it if it is already running. `Esc` or a click outside closes the dialog.
+`Super`+`/` opens a search dialog listing all applications, most used first as tracked by GNOME. Type to filter, pick with `Up`/`Down` or the mouse, and press `Enter` or click to launch the app or focus it if it is already running. `Esc` or a click outside closes the dialog.
 
 ## Shortcuts
 

@@ -11,15 +11,20 @@ import { Shortcuts } from "./shortcuts.js";
 const ACCELERATOR = "<Super>slash";
 const ICON_SIZE = 32;
 
+// Most used first, as tracked by the shell; then by name.
 function getApps() {
   const appSystem = Shell.AppSystem.get_default();
+  const usage = Shell.AppUsage.get_default();
 
   return appSystem
     .get_installed()
     .filter((info) => info.should_show())
     .map((info) => appSystem.lookup_app(info.get_id()))
     .filter((app) => app)
-    .sort((a, b) => a.compare_by_name(b));
+    .sort(
+      (a, b) =>
+        usage.compare(a.get_id(), b.get_id()) || a.compare_by_name(b),
+    );
 }
 
 const LauncherDialog = GObject.registerClass(
@@ -66,13 +71,13 @@ const LauncherDialog = GObject.registerClass(
       this._updateList();
     }
 
-    // Matches like the overview: best matches first, by name within a group.
+    // Matches like the overview, but only to filter: the order stays by usage.
     _findApps(query) {
       if (!query) return this._apps;
 
-      return Shell.AppSystem.search(query).flatMap((ids) =>
-        this._apps.filter((app) => ids.includes(app.get_id())),
-      );
+      const ids = new Set(Shell.AppSystem.search(query).flat());
+
+      return this._apps.filter((app) => ids.has(app.get_id()));
     }
 
     _updateList() {
