@@ -1,0 +1,25 @@
+.launcher-dialog {
+  width: 28em;
+}
+
+.launcher-entry {
+  padding: 12px 9px;
+}
+
+.launcher-list {
+  height: 26em;
+}
+
+.launcher-row {
+  padding: 6px 9px;
+  border-radius: 9px;
+}
+
+.launcher-row-content {
+  spacing: 12px;
+}
+
+.launcher-row:selected {
+  background-color: -st-accent-color;
+  color: -st-accent-fg-color;
+}

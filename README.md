@@ -1,8 +1,12 @@
 # Launcher
 
-GNOME Shell extension with shortcuts that launch or focus apps, and fixed rules for placing new windows.
+GNOME Shell extension with an app launcher, shortcuts that launch or focus apps, and fixed rules for placing new windows.
 
 Personal extension, used only by me and not published to extensions.gnome.org. There is no preferences UI; shortcuts are defined in `appShortcuts.js` and rules in `windowRules.js`.
+
+## Launcher
+
+`Super`+`/` opens a search dialog listing all applications. Type to filter, pick with `Up`/`Down` or the mouse, and press `Enter` or click to launch the app or focus it if it is already running. `Esc` or a click outside closes the dialog.
 
 ## Shortcuts
 
