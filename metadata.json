@@ -1,0 +1,6 @@
+{
+  "name": "Launcher",
+  "description": "Personal launcher",
+  "uuid": "launcher@adaspt",
+  "shell-version": ["50"]
+}
