@@ -17,15 +17,22 @@
  */
 import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
 
+import { AppShortcuts } from "./appShortcuts.js";
 import { WindowRules } from "./windowRules.js";
 
 export default class LauncherExtension extends Extension {
   enable() {
     this._windowRules = new WindowRules();
     this._windowRules.enable();
+
+    this._appShortcuts = new AppShortcuts();
+    this._appShortcuts.enable();
   }
 
   disable() {
+    this._appShortcuts.disable();
+    this._appShortcuts = null;
+
     this._windowRules.disable();
     this._windowRules = null;
   }

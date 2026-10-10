@@ -1,8 +1,22 @@
 # Launcher
 
-GNOME Shell extension that places new windows according to fixed rules.
+GNOME Shell extension with shortcuts that launch or focus apps, and fixed rules for placing new windows.
 
-Personal extension, used only by me and not published to extensions.gnome.org. There is no preferences UI; rules are defined in `windowRules.js`.
+Personal extension, used only by me and not published to extensions.gnome.org. There is no preferences UI; shortcuts are defined in `appShortcuts.js` and rules in `windowRules.js`.
+
+## Shortcuts
+
+Each shortcut launches the app, or focuses its most recent window if it is already running, switching workspace when needed.
+
+| Shortcut                 | App         |
+| ------------------------ | ----------- |
+| `Super`+`Enter`          | Ghostty     |
+| `Super`+`Shift`+`Enter`  | VS Code     |
+| `Super`+`Shift`+`W`      | Chrome      |
+| `Super`+`Shift`+`A`      | Claude      |
+| `Super`+`Shift`+`I`      | ChatGPT     |
+| `Super`+`Shift`+`M`      | Teams (PWA) |
+| `Super`+`Shift`+`N`      | Text Editor |
 
 ## Window rules
 
