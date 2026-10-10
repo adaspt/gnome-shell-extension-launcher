@@ -17,8 +17,16 @@
  */
 import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
 
-export default class LauncherExtension extends Extension {
-  enable() {}
+import { WindowRules } from "./windowRules.js";
 
-  disable() {}
+export default class LauncherExtension extends Extension {
+  enable() {
+    this._windowRules = new WindowRules();
+    this._windowRules.enable();
+  }
+
+  disable() {
+    this._windowRules.disable();
+    this._windowRules = null;
+  }
 }
