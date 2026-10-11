@@ -18,8 +18,11 @@
 import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
 
 import { AppShortcuts } from "./appShortcuts.js";
+import { FocusRing } from "./focusRing.js";
 import { Launcher } from "./launcher.js";
+import { WindowFocus } from "./windowFocus.js";
 import { WindowRules } from "./windowRules.js";
+import { WindowSize } from "./windowSize.js";
 
 export default class LauncherExtension extends Extension {
   enable() {
@@ -31,9 +34,27 @@ export default class LauncherExtension extends Extension {
 
     this._launcher = new Launcher();
     this._launcher.enable();
+
+    this._windowSize = new WindowSize();
+    this._windowSize.enable();
+
+    this._windowFocus = new WindowFocus();
+    this._windowFocus.enable();
+
+    this._focusRing = new FocusRing();
+    this._focusRing.enable();
   }
 
   disable() {
+    this._focusRing.disable();
+    this._focusRing = null;
+
+    this._windowFocus.disable();
+    this._windowFocus = null;
+
+    this._windowSize.disable();
+    this._windowSize = null;
+
     this._launcher.disable();
     this._launcher = null;
 
