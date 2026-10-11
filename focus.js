@@ -14,7 +14,7 @@ const WINDOW_TYPES = [
 
 // Switches focus on behalf of the shortcuts and the launcher, flashing a ring
 // around the window that receives it.
-export class FocusRing {
+export class Focus {
   constructor() {
     this._ring = null;
   }
@@ -48,25 +48,21 @@ export class FocusRing {
     if (!WINDOW_TYPES.includes(window?.get_window_type())) return;
 
     const frame = window.get_frame_rect();
-    const ring = new St.Widget({
+    this._ring = new St.Widget({
       style_class: "launcher-focus-ring",
       x: frame.x,
       y: frame.y,
       width: frame.width,
       height: frame.height,
     });
-    this._ring = ring;
 
-    Main.uiGroup.add_child(ring);
-    ring.ease({
+    Main.uiGroup.add_child(this._ring);
+    this._ring.ease({
       opacity: 0,
       duration: FADE_DURATION,
       mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-      onComplete: () => {
-        if (this._ring === ring) this._ring = null;
-
-        ring.destroy();
-      },
+      // Only a fade that ran to its end gets here, so the ring is this one.
+      onComplete: () => this._remove(),
     });
   }
 

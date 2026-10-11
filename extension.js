@@ -19,7 +19,7 @@ import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
 
 import { AppName } from "./appName.js";
 import { addAppShortcuts } from "./appShortcuts.js";
-import { FocusRing } from "./focusRing.js";
+import { Focus } from "./focus.js";
 import { Launcher } from "./launcher.js";
 import { Shortcuts } from "./shortcuts.js";
 import { addWindowFocusShortcuts } from "./windowFocus.js";
@@ -29,17 +29,17 @@ import { addWindowSizeShortcuts } from "./windowSize.js";
 export default class LauncherExtension extends Extension {
   enable() {
     const shortcuts = new Shortcuts();
-    const focusRing = new FocusRing();
+    const focus = new Focus();
 
-    addAppShortcuts(shortcuts, focusRing);
+    addAppShortcuts(shortcuts, focus);
     addWindowSizeShortcuts(shortcuts);
-    addWindowFocusShortcuts(shortcuts, focusRing);
+    addWindowFocusShortcuts(shortcuts, focus);
 
     this._modules = [
       new WindowRules(),
-      focusRing,
+      focus,
       shortcuts,
-      new Launcher(shortcuts, focusRing),
+      new Launcher(shortcuts, focus),
       new AppName(),
     ];
   }

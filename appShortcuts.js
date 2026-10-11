@@ -1,24 +1,12 @@
 import Shell from "gi://Shell";
 
-const SHORTCUTS = [
-  { accelerator: "<Super>Return", app: "com.mitchellh.ghostty.desktop" },
-  { accelerator: "<Shift><Super>Return", app: "com.microsoft.VSCode.desktop" },
-  { accelerator: "<Shift><Super>w", app: "google-chrome.desktop" },
-  { accelerator: "<Shift><Super>a", app: "com.anthropic.Claude.desktop" },
-  { accelerator: "<Shift><Super>i", app: "chatgpt.desktop" },
-  {
-    // Microsoft Teams PWA
-    accelerator: "<Shift><Super>m",
-    app: "chrome-ompifgpmddkgmclendfeacglnodjjndh-Default.desktop",
-  },
-  { accelerator: "<Shift><Super>n", app: "org.gnome.TextEditor.desktop" },
-];
+import { APPS } from "./apps.js";
 
-export function addAppShortcuts(shortcuts, focusRing) {
+export function addAppShortcuts(shortcuts, focus) {
   const appSystem = Shell.AppSystem.get_default();
 
-  for (const { accelerator, app } of SHORTCUTS)
+  for (const { accelerator, app } of APPS)
     shortcuts.add(accelerator, () =>
-      focusRing.activateApp(appSystem.lookup_app(app)),
+      focus.activateApp(appSystem.lookup_app(app)),
     );
 }

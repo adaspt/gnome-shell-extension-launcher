@@ -41,7 +41,7 @@ function movePointerToMonitor(monitor) {
   );
 }
 
-function focusNeighborMonitor(direction, focusRing) {
+function focusNeighborMonitor(direction, focus) {
   const monitor = global.display.get_monitor_neighbor_index(
     getCurrentMonitor(),
     direction,
@@ -60,10 +60,10 @@ function focusNeighborMonitor(direction, focusRing) {
   // Sorted from the lowest to the topmost.
   const topmost = global.display.sort_windows_by_stacking(windows).at(-1);
 
-  focusRing.activateWindow(topmost);
+  focus.activateWindow(topmost);
 }
 
-function cycleMonitorWindows(direction, focusRing) {
+function cycleMonitorWindows(direction, focus) {
   // Activating a window changes both stacking and MRU order, so the cycle
   // follows the order in which the windows were created instead.
   const windows = getMonitorWindows(getCurrentMonitor()).sort(
@@ -79,20 +79,20 @@ function cycleMonitorWindows(direction, focusRing) {
       : (index + direction + windows.length) % windows.length;
   if (targetIndex === index) return;
 
-  focusRing.activateWindow(windows[targetIndex]);
+  focus.activateWindow(windows[targetIndex]);
 }
 
-export function addWindowFocusShortcuts(shortcuts, focusRing) {
+export function addWindowFocusShortcuts(shortcuts, focus) {
   shortcuts.add(MONITOR_LEFT_ACCELERATOR, () =>
-    focusNeighborMonitor(Meta.DisplayDirection.LEFT, focusRing),
+    focusNeighborMonitor(Meta.DisplayDirection.LEFT, focus),
   );
   shortcuts.add(MONITOR_RIGHT_ACCELERATOR, () =>
-    focusNeighborMonitor(Meta.DisplayDirection.RIGHT, focusRing),
+    focusNeighborMonitor(Meta.DisplayDirection.RIGHT, focus),
   );
   shortcuts.add(NEXT_WINDOW_ACCELERATOR, () =>
-    cycleMonitorWindows(CycleDirection.NEXT, focusRing),
+    cycleMonitorWindows(CycleDirection.NEXT, focus),
   );
   shortcuts.add(PREVIOUS_WINDOW_ACCELERATOR, () =>
-    cycleMonitorWindows(CycleDirection.PREVIOUS, focusRing),
+    cycleMonitorWindows(CycleDirection.PREVIOUS, focus),
   );
 }

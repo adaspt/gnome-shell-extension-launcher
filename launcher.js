@@ -29,12 +29,12 @@ function getApps() {
 
 const LauncherDialog = GObject.registerClass(
   class LauncherDialog extends ModalDialog.ModalDialog {
-    _init(focusRing) {
+    _init(focus) {
       super._init({ styleClass: "launcher-dialog" });
 
       this.buttonLayout.hide();
 
-      this._focusRing = focusRing;
+      this._focus = focus;
       this._apps = getApps();
       this._results = [];
       this._selected = 0;
@@ -85,34 +85,38 @@ const LauncherDialog = GObject.registerClass(
       this._results = this._findApps(this._entry.text.trim());
 
       this._list.destroy_all_children();
-      for (const [index, app] of this._results.entries()) {
-        const content = new St.BoxLayout({
-          style_class: "launcher-row-content",
-          x_align: Clutter.ActorAlign.START,
-          x_expand: true,
-        });
-        content.add_child(app.create_icon_texture(ICON_SIZE));
-        content.add_child(
-          new St.Label({
-            text: app.get_name(),
-            y_align: Clutter.ActorAlign.CENTER,
-          }),
-        );
-
-        const row = new St.Button({
-          style_class: "launcher-row",
-          child: content,
-        });
-        row.connect("clicked", () => this._activate(app));
-        // Unlike hover, motion ignores rows scrolling under a resting pointer.
-        row.connect("motion-event", () => {
-          if (index !== this._selected) this._select(index, false);
-          return Clutter.EVENT_PROPAGATE;
-        });
-        this._list.add_child(row);
-      }
+      for (const [index, app] of this._results.entries())
+        this._list.add_child(this._createRow(app, index));
 
       this._select(0);
+    }
+
+    _createRow(app, index) {
+      const content = new St.BoxLayout({
+        style_class: "launcher-row-content",
+        x_align: Clutter.ActorAlign.START,
+        x_expand: true,
+      });
+      content.add_child(app.create_icon_texture(ICON_SIZE));
+      content.add_child(
+        new St.Label({
+          text: app.get_name(),
+          y_align: Clutter.ActorAlign.CENTER,
+        }),
+      );
+
+      const row = new St.Button({
+        style_class: "launcher-row",
+        child: content,
+      });
+      row.connect("clicked", () => this._activate(app));
+      // Unlike hover, motion ignores rows scrolling under a resting pointer.
+      row.connect("motion-event", () => {
+        if (index !== this._selected) this._select(index, false);
+        return Clutter.EVENT_PROPAGATE;
+      });
+
+      return row;
     }
 
     _select(index, reveal = true) {
@@ -163,14 +167,14 @@ const LauncherDialog = GObject.registerClass(
 
     _activate(app) {
       this.close();
-      this._focusRing.activateApp(app);
+      this._focus.activateApp(app);
     }
   },
 );
 
 export class Launcher {
-  constructor(shortcuts, focusRing) {
-    this._focusRing = focusRing;
+  constructor(shortcuts, focus) {
+    this._focus = focus;
 
     shortcuts.add(ACCELERATOR, () => this._open());
   }
@@ -183,7 +187,7 @@ export class Launcher {
     if (this._dialog) return;
 
     // The dialog destroys itself when it closes.
-    this._dialog = new LauncherDialog(this._focusRing);
+    this._dialog = new LauncherDialog(this._focus);
     this._dialog.connect("destroy", () => (this._dialog = null));
     this._dialog.open();
   }
