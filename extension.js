@@ -17,6 +17,7 @@
  */
 import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
 
+import { AppName } from "./appName.js";
 import { AppShortcuts } from "./appShortcuts.js";
 import { FocusRing } from "./focusRing.js";
 import { Launcher } from "./launcher.js";
@@ -42,9 +43,15 @@ export default class LauncherExtension extends Extension {
 
     this._windowFocus = new WindowFocus(this._focusRing);
     this._windowFocus.enable();
+
+    this._appName = new AppName();
+    this._appName.enable();
   }
 
   disable() {
+    this._appName.disable();
+    this._appName = null;
+
     this._windowFocus.disable();
     this._windowFocus = null;
 

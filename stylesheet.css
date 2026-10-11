@@ -29,3 +29,11 @@
   border-color: -st-accent-color;
   border-radius: 16px;
 }
+
+.launcher-app-name {
+  spacing: 6px;
+}
+
+.launcher-app-name-icon {
+  icon-size: 1.091em;
+}
