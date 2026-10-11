@@ -1,5 +1,6 @@
 import Clutter from "gi://Clutter";
 import Meta from "gi://Meta";
+import Shell from "gi://Shell";
 import St from "gi://St";
 
 import * as Main from "resource:///org/gnome/shell/ui/main.js";
@@ -11,13 +12,36 @@ const WINDOW_TYPES = [
   Meta.WindowType.MODAL_DIALOG,
 ];
 
+// Switches focus on behalf of the shortcuts and the launcher, flashing a ring
+// around the window that receives it.
 export class FocusRing {
   constructor() {
     this._ring = null;
   }
 
+  // Launches a stopped app; otherwise focuses its most recent window, switching
+  // to that window's workspace when needed.
+  activateApp(app) {
+    if (!app) return;
+
+    const isRunning = app.state === Shell.AppState.RUNNING;
+
+    app.activate();
+    // A launched app has no window to mark yet.
+    if (isRunning) this._flash();
+  }
+
+  activateWindow(window) {
+    window.activate(global.get_current_time());
+    this._flash();
+  }
+
+  destroy() {
+    this._remove();
+  }
+
   // Marks the focused window with a ring that fades out.
-  flash() {
+  _flash() {
     this._remove();
 
     const window = global.display.focus_window;
@@ -44,10 +68,6 @@ export class FocusRing {
         ring.destroy();
       },
     });
-  }
-
-  destroy() {
-    this._remove();
   }
 
   _remove() {

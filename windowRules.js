@@ -2,41 +2,20 @@ import Meta from "gi://Meta";
 
 import * as Main from "resource:///org/gnome/shell/ui/main.js";
 
+import {
+  RIGHT_HALF,
+  RIGHT_THREE_QUARTERS,
+  getTargetRect,
+  moveResizeWindow,
+} from "./geometry.js";
+
 // monitor counts monitors from left to right, starting at 0. A rule is either
-// maximized or a rectangle in fractions of that monitor's work area.
+// maximized or a placement in fractions of that monitor's work area.
 const RULES = [
-  {
-    wmClass: "com.mitchellh.ghostty",
-    monitor: 0,
-    x: 0.25,
-    y: 0,
-    width: 0.75,
-    height: 1,
-  },
-  {
-    wmClass: "com.anthropic.Claude",
-    monitor: 0,
-    x: 0.25,
-    y: 0,
-    width: 0.75,
-    height: 1,
-  },
-  {
-    wmClass: "Chatgpt",
-    monitor: 0,
-    x: 0.25,
-    y: 0,
-    width: 0.75,
-    height: 1,
-  },
-  {
-    wmClass: "org.gnome.TextEditor",
-    monitor: 1,
-    x: 0.5,
-    y: 0,
-    width: 0.5,
-    height: 1,
-  },
+  { wmClass: "com.mitchellh.ghostty", monitor: 0, ...RIGHT_THREE_QUARTERS },
+  { wmClass: "com.anthropic.Claude", monitor: 0, ...RIGHT_THREE_QUARTERS },
+  { wmClass: "Chatgpt", monitor: 0, ...RIGHT_THREE_QUARTERS },
+  { wmClass: "org.gnome.TextEditor", monitor: 1, ...RIGHT_HALF },
   { wmClass: "com.microsoft.VSCode", monitor: 1, maximized: true },
   { wmClass: "google-chrome", monitor: 2, maximized: true },
   {
@@ -54,23 +33,8 @@ function getMonitorIndex(position) {
   return monitors[Math.min(position, monitors.length - 1)].index;
 }
 
-// Rounds the edges rather than the size, so adjacent fractions never overlap.
-function getTargetRect(workArea, rule) {
-  const left = Math.round(workArea.width * rule.x);
-  const top = Math.round(workArea.height * rule.y);
-  const right = Math.round(workArea.width * (rule.x + rule.width));
-  const bottom = Math.round(workArea.height * (rule.y + rule.height));
-
-  return {
-    x: workArea.x + left,
-    y: workArea.y + top,
-    width: right - left,
-    height: bottom - top,
-  };
-}
-
 export class WindowRules {
-  enable() {
+  constructor() {
     global.display.connectObject(
       "window-created",
       (_display, window) => this._onWindowCreated(window),
@@ -78,7 +42,7 @@ export class WindowRules {
     );
   }
 
-  disable() {
+  destroy() {
     global.display.disconnectObject(this);
     for (const actor of global.get_window_actors())
       actor.disconnectObject(this);
@@ -105,8 +69,7 @@ export class WindowRules {
     }
 
     const workArea = window.get_work_area_for_monitor(monitor);
-    const { x, y, width, height } = getTargetRect(workArea, rule);
 
-    window.move_resize_frame(true, x, y, width, height);
+    moveResizeWindow(window, getTargetRect(workArea, rule));
   }
 }

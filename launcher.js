@@ -6,8 +6,7 @@ import St from "gi://St";
 import { ensureActorVisibleInScrollView } from "resource:///org/gnome/shell/misc/animationUtils.js";
 import * as ModalDialog from "resource:///org/gnome/shell/ui/modalDialog.js";
 
-import { activateApp } from "./activateApp.js";
-import { Shortcuts } from "./shortcuts.js";
+import { clamp } from "./geometry.js";
 
 const ACCELERATOR = "<Super>slash";
 const ICON_SIZE = 32;
@@ -121,7 +120,7 @@ const LauncherDialog = GObject.registerClass(
       if (rows.length === 0) return;
 
       rows[this._selected]?.remove_style_pseudo_class("selected");
-      this._selected = Math.min(Math.max(index, 0), rows.length - 1);
+      this._selected = clamp(index, 0, rows.length - 1);
       rows[this._selected].add_style_pseudo_class("selected");
 
       if (reveal)
@@ -164,25 +163,19 @@ const LauncherDialog = GObject.registerClass(
 
     _activate(app) {
       this.close();
-      activateApp(app, this._focusRing);
+      this._focusRing.activateApp(app);
     }
   },
 );
 
 export class Launcher {
-  constructor(focusRing) {
+  constructor(shortcuts, focusRing) {
     this._focusRing = focusRing;
+
+    shortcuts.add(ACCELERATOR, () => this._open());
   }
 
-  enable() {
-    this._shortcuts = new Shortcuts();
-    this._shortcuts.add(ACCELERATOR, () => this._open());
-  }
-
-  disable() {
-    this._shortcuts.destroy();
-    this._shortcuts = null;
-
+  destroy() {
     this._dialog?.destroy();
   }
 

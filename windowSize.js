@@ -1,13 +1,18 @@
 import Meta from "gi://Meta";
 
-import { Shortcuts } from "./shortcuts.js";
+import {
+  LEFT_THREE_QUARTERS,
+  RIGHT_THREE_QUARTERS,
+  clamp,
+  getTargetRect,
+  moveResizeWindow,
+} from "./geometry.js";
 
 const INCREASE_ACCELERATOR = "<Super>equal";
 const DECREASE_ACCELERATOR = "<Super>minus";
 const FILL_ACCELERATOR = "<Super>f";
 const THREE_QUARTER_ACCELERATOR = "<Super>r";
 const WIDTH_STEPS = 10;
-const THREE_QUARTER_WIDTH = 0.75;
 // Pixels by which a window may miss a step and still count as being on it,
 // e.g. when size increments keep it from reaching the exact width.
 const SNAP_TOLERANCE = 8;
@@ -16,10 +21,6 @@ const ResizeDirection = {
   INCREASE: 1,
   DECREASE: -1,
 };
-
-function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max);
-}
 
 function getTargetWidth(currentWidth, workAreaWidth, direction) {
   const step = workAreaWidth / WIDTH_STEPS;
@@ -45,13 +46,14 @@ function getTargetX(frame, workArea, targetWidth) {
 }
 
 // Right edge first; a window already sitting there goes to the left edge.
-function getThreeQuarterX(frame, workArea, targetWidth) {
-  const workAreaRight = workArea.x + workArea.width;
+function getThreeQuarterRect(frame, workArea) {
+  const right = getTargetRect(workArea, RIGHT_THREE_QUARTERS);
+  const frameRight = frame.x + frame.width;
   const isAtRight =
-    Math.abs(frame.width - targetWidth) <= SNAP_TOLERANCE &&
-    Math.abs(frame.x + frame.width - workAreaRight) <= SNAP_TOLERANCE;
+    Math.abs(frame.width - right.width) <= SNAP_TOLERANCE &&
+    Math.abs(frameRight - (right.x + right.width)) <= SNAP_TOLERANCE;
 
-  return isAtRight ? workArea.x : workAreaRight - targetWidth;
+  return isAtRight ? getTargetRect(workArea, LEFT_THREE_QUARTERS) : right;
 }
 
 function getResizableFocusedWindow() {
@@ -61,13 +63,6 @@ function getResizableFocusedWindow() {
   if (!window.resizeable || !window.allows_move()) return null;
 
   return window;
-}
-
-function moveResizeWindow(window, x, y, width, height) {
-  // Tiled windows are vertically maximized, so this untiles them too.
-  if (window.get_maximize_flags() !== 0) window.unmaximize();
-
-  window.move_resize_frame(true, x, y, width, height);
 }
 
 function resizeFocusedWindow(direction) {
@@ -82,16 +77,19 @@ function resizeFocusedWindow(direction) {
 
   const targetX = getTargetX(frame, workArea, targetWidth);
 
-  moveResizeWindow(window, targetX, frame.y, targetWidth, frame.height);
+  moveResizeWindow(window, {
+    x: targetX,
+    y: frame.y,
+    width: targetWidth,
+    height: frame.height,
+  });
 }
 
 function fillWorkArea() {
   const window = getResizableFocusedWindow();
   if (!window) return;
 
-  const { x, y, width, height } = window.get_work_area_current_monitor();
-
-  moveResizeWindow(window, x, y, width, height);
+  moveResizeWindow(window, window.get_work_area_current_monitor());
 }
 
 function placeThreeQuarterWidth() {
@@ -101,29 +99,16 @@ function placeThreeQuarterWidth() {
   const frame = window.get_frame_rect();
   const workArea = window.get_work_area_current_monitor();
 
-  const targetWidth = Math.round(workArea.width * THREE_QUARTER_WIDTH);
-  const targetX = getThreeQuarterX(frame, workArea, targetWidth);
-
-  moveResizeWindow(window, targetX, workArea.y, targetWidth, workArea.height);
+  moveResizeWindow(window, getThreeQuarterRect(frame, workArea));
 }
 
-export class WindowSize {
-  enable() {
-    this._shortcuts = new Shortcuts();
-    this._shortcuts.add(INCREASE_ACCELERATOR, () =>
-      resizeFocusedWindow(ResizeDirection.INCREASE),
-    );
-    this._shortcuts.add(DECREASE_ACCELERATOR, () =>
-      resizeFocusedWindow(ResizeDirection.DECREASE),
-    );
-    this._shortcuts.add(FILL_ACCELERATOR, () => fillWorkArea());
-    this._shortcuts.add(THREE_QUARTER_ACCELERATOR, () =>
-      placeThreeQuarterWidth(),
-    );
-  }
-
-  disable() {
-    this._shortcuts.destroy();
-    this._shortcuts = null;
-  }
+export function addWindowSizeShortcuts(shortcuts) {
+  shortcuts.add(INCREASE_ACCELERATOR, () =>
+    resizeFocusedWindow(ResizeDirection.INCREASE),
+  );
+  shortcuts.add(DECREASE_ACCELERATOR, () =>
+    resizeFocusedWindow(ResizeDirection.DECREASE),
+  );
+  shortcuts.add(FILL_ACCELERATOR, fillWorkArea);
+  shortcuts.add(THREE_QUARTER_ACCELERATOR, placeThreeQuarterWidth);
 }

@@ -1,8 +1,5 @@
 import Shell from "gi://Shell";
 
-import { activateApp } from "./activateApp.js";
-import { Shortcuts } from "./shortcuts.js";
-
 const SHORTCUTS = [
   { accelerator: "<Super>Return", app: "com.mitchellh.ghostty.desktop" },
   { accelerator: "<Shift><Super>Return", app: "com.microsoft.VSCode.desktop" },
@@ -17,23 +14,11 @@ const SHORTCUTS = [
   { accelerator: "<Shift><Super>n", app: "org.gnome.TextEditor.desktop" },
 ];
 
-export class AppShortcuts {
-  constructor(focusRing) {
-    this._focusRing = focusRing;
-  }
+export function addAppShortcuts(shortcuts, focusRing) {
+  const appSystem = Shell.AppSystem.get_default();
 
-  enable() {
-    const appSystem = Shell.AppSystem.get_default();
-
-    this._shortcuts = new Shortcuts();
-    for (const { accelerator, app } of SHORTCUTS)
-      this._shortcuts.add(accelerator, () =>
-        activateApp(appSystem.lookup_app(app), this._focusRing),
-      );
-  }
-
-  disable() {
-    this._shortcuts.destroy();
-    this._shortcuts = null;
-  }
+  for (const { accelerator, app } of SHORTCUTS)
+    shortcuts.add(accelerator, () =>
+      focusRing.activateApp(appSystem.lookup_app(app)),
+    );
 }

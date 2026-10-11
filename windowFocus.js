@@ -1,7 +1,5 @@
 import Meta from "gi://Meta";
 
-import { Shortcuts } from "./shortcuts.js";
-
 const MONITOR_LEFT_ACCELERATOR = "<Super><Control>Left";
 const MONITOR_RIGHT_ACCELERATOR = "<Super><Control>Right";
 const NEXT_WINDOW_ACCELERATOR = "<Super><Control>Down";
@@ -62,8 +60,7 @@ function focusNeighborMonitor(direction, focusRing) {
   // Sorted from the lowest to the topmost.
   const topmost = global.display.sort_windows_by_stacking(windows).at(-1);
 
-  topmost.activate(global.get_current_time());
-  focusRing.flash();
+  focusRing.activateWindow(topmost);
 }
 
 function cycleMonitorWindows(direction, focusRing) {
@@ -82,33 +79,20 @@ function cycleMonitorWindows(direction, focusRing) {
       : (index + direction + windows.length) % windows.length;
   if (targetIndex === index) return;
 
-  windows[targetIndex].activate(global.get_current_time());
-  focusRing.flash();
+  focusRing.activateWindow(windows[targetIndex]);
 }
 
-export class WindowFocus {
-  constructor(focusRing) {
-    this._focusRing = focusRing;
-  }
-
-  enable() {
-    this._shortcuts = new Shortcuts();
-    this._shortcuts.add(MONITOR_LEFT_ACCELERATOR, () =>
-      focusNeighborMonitor(Meta.DisplayDirection.LEFT, this._focusRing),
-    );
-    this._shortcuts.add(MONITOR_RIGHT_ACCELERATOR, () =>
-      focusNeighborMonitor(Meta.DisplayDirection.RIGHT, this._focusRing),
-    );
-    this._shortcuts.add(NEXT_WINDOW_ACCELERATOR, () =>
-      cycleMonitorWindows(CycleDirection.NEXT, this._focusRing),
-    );
-    this._shortcuts.add(PREVIOUS_WINDOW_ACCELERATOR, () =>
-      cycleMonitorWindows(CycleDirection.PREVIOUS, this._focusRing),
-    );
-  }
-
-  disable() {
-    this._shortcuts.destroy();
-    this._shortcuts = null;
-  }
+export function addWindowFocusShortcuts(shortcuts, focusRing) {
+  shortcuts.add(MONITOR_LEFT_ACCELERATOR, () =>
+    focusNeighborMonitor(Meta.DisplayDirection.LEFT, focusRing),
+  );
+  shortcuts.add(MONITOR_RIGHT_ACCELERATOR, () =>
+    focusNeighborMonitor(Meta.DisplayDirection.RIGHT, focusRing),
+  );
+  shortcuts.add(NEXT_WINDOW_ACCELERATOR, () =>
+    cycleMonitorWindows(CycleDirection.NEXT, focusRing),
+  );
+  shortcuts.add(PREVIOUS_WINDOW_ACCELERATOR, () =>
+    cycleMonitorWindows(CycleDirection.PREVIOUS, focusRing),
+  );
 }

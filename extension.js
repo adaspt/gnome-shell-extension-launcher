@@ -18,56 +18,35 @@
 import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
 
 import { AppName } from "./appName.js";
-import { AppShortcuts } from "./appShortcuts.js";
+import { addAppShortcuts } from "./appShortcuts.js";
 import { FocusRing } from "./focusRing.js";
 import { Launcher } from "./launcher.js";
-import { WindowFocus } from "./windowFocus.js";
+import { Shortcuts } from "./shortcuts.js";
+import { addWindowFocusShortcuts } from "./windowFocus.js";
 import { WindowRules } from "./windowRules.js";
-import { WindowSize } from "./windowSize.js";
+import { addWindowSizeShortcuts } from "./windowSize.js";
 
 export default class LauncherExtension extends Extension {
   enable() {
-    this._windowRules = new WindowRules();
-    this._windowRules.enable();
+    const shortcuts = new Shortcuts();
+    const focusRing = new FocusRing();
 
-    this._focusRing = new FocusRing();
+    addAppShortcuts(shortcuts, focusRing);
+    addWindowSizeShortcuts(shortcuts);
+    addWindowFocusShortcuts(shortcuts, focusRing);
 
-    this._appShortcuts = new AppShortcuts(this._focusRing);
-    this._appShortcuts.enable();
-
-    this._launcher = new Launcher(this._focusRing);
-    this._launcher.enable();
-
-    this._windowSize = new WindowSize();
-    this._windowSize.enable();
-
-    this._windowFocus = new WindowFocus(this._focusRing);
-    this._windowFocus.enable();
-
-    this._appName = new AppName();
-    this._appName.enable();
+    this._modules = [
+      new WindowRules(),
+      focusRing,
+      shortcuts,
+      new Launcher(shortcuts, focusRing),
+      new AppName(),
+    ];
   }
 
   disable() {
-    this._appName.disable();
-    this._appName = null;
+    for (const module of this._modules.reverse()) module.destroy();
 
-    this._windowFocus.disable();
-    this._windowFocus = null;
-
-    this._windowSize.disable();
-    this._windowSize = null;
-
-    this._launcher.disable();
-    this._launcher = null;
-
-    this._appShortcuts.disable();
-    this._appShortcuts = null;
-
-    this._focusRing.destroy();
-    this._focusRing = null;
-
-    this._windowRules.disable();
-    this._windowRules = null;
+    this._modules = null;
   }
 }

@@ -10,7 +10,7 @@ const ROLE = "launcher-app-name";
 // Shows the icon and name of the focused app in the top bar, next to the
 // workspace indicator.
 export class AppName {
-  enable() {
+  constructor() {
     this._tracker = Shell.WindowTracker.get_default();
 
     this._icon = new St.Icon({ style_class: "launcher-app-name-icon" });
@@ -30,14 +30,9 @@ export class AppName {
     this._update();
   }
 
-  disable() {
+  destroy() {
     this._tracker.disconnectObject(this);
-    this._tracker = null;
-
     this._button.destroy();
-    this._button = null;
-    this._icon = null;
-    this._label = null;
   }
 
   _update() {
