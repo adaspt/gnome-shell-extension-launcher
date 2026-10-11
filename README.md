@@ -1,6 +1,6 @@
 # Launcher
 
-GNOME Shell extension with an app launcher, shortcuts that launch or focus apps, fixed rules for placing new windows, and shortcuts for sizing the focused window and moving focus between windows. It also flashes a ring around a window when it gets focus.
+GNOME Shell extension with an app launcher, shortcuts that launch or focus apps, fixed rules for placing new windows, and shortcuts for sizing the focused window and moving focus between windows. It also flashes a ring around an already open window when the launcher or one of the shortcuts switches focus to it.
 
 Personal extension, used only by me and not published to extensions.gnome.org. There is no preferences UI; app shortcuts are defined in `appShortcuts.js`, rules in `windowRules.js`, and window shortcuts in `windowSize.js` and `windowFocus.js`.
 

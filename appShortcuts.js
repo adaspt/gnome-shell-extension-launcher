@@ -1,5 +1,6 @@
 import Shell from "gi://Shell";
 
+import { activateApp } from "./activateApp.js";
 import { Shortcuts } from "./shortcuts.js";
 
 const SHORTCUTS = [
@@ -16,17 +17,19 @@ const SHORTCUTS = [
   { accelerator: "<Shift><Super>n", app: "org.gnome.TextEditor.desktop" },
 ];
 
-// Launches a stopped app; otherwise focuses its most recent window, switching
-// to that window's workspace when needed.
-function activateApp(id) {
-  Shell.AppSystem.get_default().lookup_app(id)?.activate();
-}
-
 export class AppShortcuts {
+  constructor(focusRing) {
+    this._focusRing = focusRing;
+  }
+
   enable() {
+    const appSystem = Shell.AppSystem.get_default();
+
     this._shortcuts = new Shortcuts();
     for (const { accelerator, app } of SHORTCUTS)
-      this._shortcuts.add(accelerator, () => activateApp(app));
+      this._shortcuts.add(accelerator, () =>
+        activateApp(appSystem.lookup_app(app), this._focusRing),
+      );
   }
 
   disable() {

@@ -11,24 +11,13 @@ const WINDOW_TYPES = [
   Meta.WindowType.MODAL_DIALOG,
 ];
 
-// Marks the newly focused window with a ring that fades out.
 export class FocusRing {
-  enable() {
+  constructor() {
     this._ring = null;
-
-    global.display.connectObject(
-      "notify::focus-window",
-      () => this._flash(),
-      this,
-    );
   }
 
-  disable() {
-    global.display.disconnectObject(this);
-    this._remove();
-  }
-
-  _flash() {
+  // Marks the focused window with a ring that fades out.
+  flash() {
     this._remove();
 
     const window = global.display.focus_window;
@@ -55,6 +44,10 @@ export class FocusRing {
         ring.destroy();
       },
     });
+  }
+
+  destroy() {
+    this._remove();
   }
 
   _remove() {

@@ -29,26 +29,22 @@ export default class LauncherExtension extends Extension {
     this._windowRules = new WindowRules();
     this._windowRules.enable();
 
-    this._appShortcuts = new AppShortcuts();
+    this._focusRing = new FocusRing();
+
+    this._appShortcuts = new AppShortcuts(this._focusRing);
     this._appShortcuts.enable();
 
-    this._launcher = new Launcher();
+    this._launcher = new Launcher(this._focusRing);
     this._launcher.enable();
 
     this._windowSize = new WindowSize();
     this._windowSize.enable();
 
-    this._windowFocus = new WindowFocus();
+    this._windowFocus = new WindowFocus(this._focusRing);
     this._windowFocus.enable();
-
-    this._focusRing = new FocusRing();
-    this._focusRing.enable();
   }
 
   disable() {
-    this._focusRing.disable();
-    this._focusRing = null;
-
     this._windowFocus.disable();
     this._windowFocus = null;
 
@@ -60,6 +56,9 @@ export default class LauncherExtension extends Extension {
 
     this._appShortcuts.disable();
     this._appShortcuts = null;
+
+    this._focusRing.destroy();
+    this._focusRing = null;
 
     this._windowRules.disable();
     this._windowRules = null;
