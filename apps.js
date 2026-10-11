@@ -27,7 +27,7 @@ export const APPS = [
     maximized: true,
   },
   {
-    app: "com.anthropic.Claude.desktop",
+    app: "claude-desktop-unofficial.desktop",
     wmClass: "com.anthropic.Claude",
     accelerator: "<Shift><Super>a",
     monitor: 0,
