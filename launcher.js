@@ -131,6 +131,16 @@ const LauncherDialog = GObject.registerClass(
         ensureActorVisibleInScrollView(this._scrollView, rows[this._selected]);
     }
 
+    // The number of rows that fit in the list at once.
+    _getPageSize() {
+      const row = this._list.get_first_child();
+      if (!row) return 1;
+
+      const { pageSize } = this._scrollView.vadjustment;
+
+      return Math.max(1, Math.floor(pageSize / row.height));
+    }
+
     _onKeyPress(event) {
       switch (event.get_key_symbol()) {
         case Clutter.KEY_Down:
@@ -138,6 +148,12 @@ const LauncherDialog = GObject.registerClass(
           return Clutter.EVENT_STOP;
         case Clutter.KEY_Up:
           this._select(this._selected - 1);
+          return Clutter.EVENT_STOP;
+        case Clutter.KEY_Page_Down:
+          this._select(this._selected + this._getPageSize());
+          return Clutter.EVENT_STOP;
+        case Clutter.KEY_Page_Up:
+          this._select(this._selected - this._getPageSize());
           return Clutter.EVENT_STOP;
         case Clutter.KEY_Return:
         case Clutter.KEY_KP_Enter:
