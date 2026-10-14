@@ -19,6 +19,7 @@ import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
 
 import { AppName } from "./appName.js";
 import { addAppShortcuts } from "./appShortcuts.js";
+import { ChromeShutdown } from "./chromeShutdown.js";
 import { Focus } from "./focus.js";
 import { Launcher } from "./launcher.js";
 import { Shortcuts } from "./shortcuts.js";
@@ -41,6 +42,7 @@ export default class LauncherExtension extends Extension {
       shortcuts,
       new Launcher(shortcuts, focus),
       new AppName(),
+      new ChromeShutdown(),
     ];
   }
 

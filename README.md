@@ -8,6 +8,8 @@ Personal extension, used only by me and not published to extensions.gnome.org. T
 
 `Super`+`X` opens a search dialog listing all applications, most used first as tracked by GNOME. Type to filter, pick with `Up`/`Down`, `PgUp`/`PgDown` or the mouse, and press `Enter` or click to launch the app or focus it if it is already running. `Esc` or a click outside closes the dialog.
 
+Press `Super`+`X` again while the dialog is open to switch to Logout, Restart, and Shutdown buttons. Use `Tab` or the arrow keys to move between buttons and `Enter` or a click to activate one, or press the letter shown on its right (`L`, `R` or `S`). Logout starts right away; Restart and Shutdown open GNOME's confirmation dialog. Another `Super`+`X` returns to applications. Each new opening starts with applications.
+
 ## App shortcuts
 
 Each shortcut launches the app, or focuses its most recent window if it is already running, switching workspace when needed.
@@ -52,6 +54,10 @@ Switching monitors also moves the pointer to the center of the target monitor, s
 ## App name
 
 The icon and name of the focused app are shown in the top bar, right of the workspace indicator. They are hidden while no window has focus, such as in the overview.
+
+## Chrome at logout
+
+Chrome does not take part in GNOME's session management, so logging out with it open kills it, and it offers to restore tabs on its next start. The extension registers with the session manager instead, and once a logout, restart or shutdown is confirmed it quits Chrome, installed web apps included, as if from Chrome's menu, waiting up to 10 seconds before the session ends. Cancelling leaves Chrome open. To get the tabs back, set Chrome's "On startup" to "Continue where you left off".
 
 ## Install
 

@@ -30,6 +30,16 @@ export class Shortcuts {
       Shell.ActionMode.NORMAL,
     );
     this._handlers.set(action, handler);
+    return action;
+  }
+
+  setActionModes(action, modes) {
+    if (!this._handlers.has(action)) return;
+
+    Main.wm.allowKeybinding(
+      Meta.external_binding_name_for_action(action),
+      modes,
+    );
   }
 
   destroy() {

@@ -37,3 +37,18 @@
 .launcher-app-name-icon {
   icon-size: 1.091em;
 }
+
+.launcher-action-content {
+  spacing: 9px;
+}
+
+.launcher-action-icon {
+  icon-size: 16px;
+}
+
+.launcher-action-key {
+  padding: 1px 7px;
+  border-radius: 6px;
+  background-color: rgba(127, 127, 127, 0.25);
+  font-weight: bold;
+}
