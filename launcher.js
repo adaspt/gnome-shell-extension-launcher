@@ -8,7 +8,7 @@ import * as ModalDialog from "resource:///org/gnome/shell/ui/modalDialog.js";
 
 import { clamp } from "./geometry.js";
 
-const ACCELERATOR = "<Super>slash";
+const ACCELERATOR = "<Super>x";
 const ICON_SIZE = 32;
 
 // Most used first, as tracked by the shell; then by name.
